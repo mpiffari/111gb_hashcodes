@@ -1,3 +1,3 @@
-# 111gb_hashcodes
+# Google Hash Code solutions
 
-Codice hash code del team 111gb (iscritti nell'hub dell'Università degli Studi di Bergamo)
+:111gb: (Uni Bg) team solution registered at Università degli Studi di Bergamo's hub.
