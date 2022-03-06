@@ -1,0 +1,145 @@
+package googlehashcode;
+
+import java.io.*;
+import java.nio.*;
+
+import org.eclipse.jdt.annotation.Nullable;
+
+public class FileHandler {
+	
+	private String separatorOfElement = " ";
+	private String absolutePath = "";
+	
+	public static void main(String[] args) {
+		FileHandler fh = new FileHandler();
+		fh.absolutePath = "C:\\Users\\miche\\OneDrive\\Desktop\\Coding\\HC_18\\V_3\\V_3\\src\\googlehashcode\\b_should_be_easy.in";
+		String lines = fh.readAlltheLine();
+		System.out.println(lines);
+	}
+	
+	public @Nullable String readFile() {
+		// reading the content of file
+		String fileText = " ";
+		try(FileInputStream fileInputStream = new FileInputStream(absolutePath)) {  
+		    int ch = fileInputStream.read();
+		    while(ch != -1) {
+		        System.out.print((char)ch);
+		        fileText = fileText + (char)ch;
+		        ch = fileInputStream.read();
+		    }
+		    return fileText;
+		} catch (FileNotFoundException e) {
+		    // exception handling
+			return null;
+		} catch (IOException e) {
+		    // exception handling
+			return null;
+		}
+	}
+	
+	//Return n char from file
+	public @Nullable byte[] readFile(int length) {
+		// reading the content of file
+		try(FileInputStream fileInputStream = new FileInputStream(absolutePath)) {  
+			byte[] data = new byte[length];
+		    int ch = fileInputStream.read(data);
+		    return data;
+		} catch (FileNotFoundException e) {
+		    // exception handling
+			return null;
+		} catch (IOException e) {
+		    // exception handling
+			return null;
+		}
+	}
+	
+	//Return each number separated by 
+	public String readAlltheLine() {
+		FileReader Testo = null;
+		try {
+			Testo=new FileReader(absolutePath);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		BufferedReader b;
+		b=new BufferedReader(Testo);
+
+		String allLine = " ";
+		int numLines = 0;
+		try {
+			numLines = FileHandler.countLinesNew(absolutePath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Num lines" + numLines);
+		try {
+			for(int i=0; i<numLines; i++){
+				System.out.println(allLine);
+				String line = b.readLine();
+				allLine = allLine.concat(line);
+			}
+			return allLine;
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+	}
+	
+	public void writeFile(String line) {
+		// write the content in file 
+		try(FileOutputStream fileOutputStream = new FileOutputStream(absolutePath)) {  
+		    fileOutputStream.write(line.getBytes());
+		} catch (FileNotFoundException e) {
+		    // exception handling
+			
+		} catch (IOException e) {
+		    // exception handling
+		}
+	}
+	
+	public void setPath(String path) {
+		this.absolutePath = path;
+	}
+	
+	public static int countLinesNew(String filename) throws IOException {
+	    InputStream is = new BufferedInputStream(new FileInputStream(filename));
+	    try {
+	        byte[] c = new byte[1024];
+
+	        int readChars = is.read(c);
+	        if (readChars == -1) {
+	            // bail out if nothing to read
+	            return 0;
+	        }
+
+	        // make it easy for the optimizer to tune this loop
+	        int count = 0;
+	        while (readChars == 1024) {
+	            for (int i=0; i<1024;) {
+	                if (c[i++] == '\n') {
+	                    ++count;
+	                }
+	            }
+	            readChars = is.read(c);
+	        }
+
+	        // count remaining characters
+	        while (readChars != -1) {
+	            System.out.println(readChars);
+	            for (int i=0; i<readChars; ++i) {
+	                if (c[i] == '\n') {
+	                    ++count;
+	                }
+	            }
+	            readChars = is.read(c);
+	        }
+	        return count == 0 ? 1 : count;
+	    } finally {
+	        is.close();
+	    }
+	}
+}

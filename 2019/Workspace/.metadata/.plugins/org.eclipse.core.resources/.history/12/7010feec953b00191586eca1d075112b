@@ -1,0 +1,112 @@
+package googlehashcode;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.management.RuntimeErrorException;
+
+public class Foo {
+	
+	static ArrayList<Slide> creaSlides (ArrayList<Foto> foto) {
+		ArrayList<Slide> s = new ArrayList<>();
+		Foto x = null;
+		for (Foto f : foto) {
+			if (f.direction) {
+				s.add(new Slide(f,null));
+			} else {
+				if (x == null) {
+					x = f;
+					continue;
+				} else {
+					s.add(new Slide(f,x));
+					x = null;
+				}
+			}
+		}
+		
+		return s;
+	}
+	
+	static ArrayList<Slide> computeSlideshow(ArrayList<Foto> foto) {
+		ArrayList<Slide> result = new ArrayList<>();
+		ArrayList<Slide> ss = Foo.creaSlides(foto);
+		Slide parent = ss.get(0);
+		ss.remove(parent);
+		result.add(parent);
+		
+		while (!ss.isEmpty()) {
+			Slide possibleChild = null;
+			int maxCost = 0;
+			for (Slide child: ss) {
+				System.out.println("1");
+				if (parent.tags.size() == child.tags.size()) {
+					int cost = interestCost(parent, child);
+					if (cost >= maxCost) {
+						maxCost = cost;
+						possibleChild = child;
+					}
+				}
+			}
+			
+			if (possibleChild == null || parent.tags.size()/2 != maxCost) {
+				//Migliore slide possibile tra slide con meno tags
+				for (Slide child: ss) {
+					System.out.println("1");
+					if (parent.tags.size() != child.tags.size()) {
+						int cost = interestCost(parent, child);
+						if (cost >= maxCost) {
+							maxCost = cost;
+							possibleChild = child;
+						}
+					}
+				}
+			}
+			
+			System.out.println("2");
+			
+			if (possibleChild == null) {
+				throw new RuntimeErrorException(null);
+			} 
+			
+			result.add(possibleChild);
+			parent = possibleChild;
+			ss.remove(parent);
+		}	
+		return result;
+	}
+	
+	static int interestCost (Slide s1, Slide s2) {
+		int cost = 0;
+		int a = intersection(new ArrayList<>(s1.tags), new ArrayList<>(s2.tags)).size();
+		ArrayList<String> a1 = new ArrayList<>(s1.tags);
+		a1.removeAll(s2.tags);
+		int b = a1.size();
+		ArrayList<String> a2 = new ArrayList<>(s2.tags);
+		a2.removeAll(s1.tags);
+		int c = a2.size();
+		return Math.min(Math.min(a, b),c);
+	}
+	
+    public static <T> List<T> union(List<T> list1, List<T> list2) {
+        Set<T> set = new HashSet<T>();
+
+        set.addAll(list1);
+        set.addAll(list2);
+        
+        return new ArrayList<T>(set);
+    }
+
+    public static <T> List<T> intersection(List<T> list1, List<T> list2) {
+        List<T> list = new ArrayList<T>();
+
+        for (T t : list1) {
+            if(list2.contains(t)) {
+                list.add(t);
+            }
+        }
+        
+        return list;
+    }
+	
+}

@@ -1,0 +1,75 @@
+package googlehashcode;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class Foo {
+	
+	static ArrayList<Slide> creaSlides (ArrayList<Foto> foto) {
+		ArrayList<Slide> s = new ArrayList<>();
+		Foto x = null;
+		for (Foto f : fotoVerticali) {
+			if (f.direction) {
+				s.add(new Slide(f,null));
+			} else {
+				if (x == null) {
+					x = f;
+					continue;
+				} else {
+					s.add(new Slide(f,x));
+					x = null;
+				}
+			}
+		}
+		
+		return s;
+	}
+	
+	static void computeSlideshow(ArrayList<Foto> foto) {
+		ArrayList<String> ss = Foo.creaSlides(foto);
+		Slide parent = ss.get(0);
+		Slide possibleChild = null;
+		int maxCost = 0;
+		for (Slide child: ss) {
+			if (parent.tags.size() == child.tags.size()) {
+				int cost = interestCost(parent, child);
+				if (cost > maxCost) {
+					maxCost = cost;
+					possibleChild = child;
+				}
+			}
+		}
+	}
+	
+	static int interestCost (Slide s1, Slide s2) {
+		int cost = 0;
+		int a = intersection(new ArrayList<>(s1.tags), new ArrayList<>(s2.tags)).size();
+		int b = new ArrayList<>(s1.tags).removeAll(s2.tags).size();
+		int c = new ArrayList<>(s2.tags).removeAll(s1.tags).size();
+		return Math.min(Math.min(a, b),c);
+	}
+	
+    public static <T> List<T> union(List<T> list1, List<T> list2) {
+        Set<T> set = new HashSet<T>();
+
+        set.addAll(list1);
+        set.addAll(list2);
+        
+        return new ArrayList<T>(set);
+    }
+
+    public static <T> List<T> intersection(List<T> list1, List<T> list2) {
+        List<T> list = new ArrayList<T>();
+
+        for (T t : list1) {
+            if(list2.contains(t)) {
+                list.add(t);
+            }
+        }
+        
+        return list;
+    }
+	
+}
